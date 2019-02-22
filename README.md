@@ -1,6 +1,6 @@
-# flutter_assign1
+# Flutter - Assignment 1
 
-A new Flutter application.
+A social login assignment for facebook and instagram.
 
 ## Getting Started
 
