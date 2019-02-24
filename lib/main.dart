@@ -29,7 +29,7 @@ class _Login extends StatefulWidget {
 }
 
 class _LoginState extends State<_Login> {
-  FacebookLogin fbLogin = new FacebookLogin();
+  FacebookLogin fbLogin = FacebookLogin();
 
   @override
   Widget build(BuildContext context) {
@@ -42,30 +42,33 @@ class _LoginState extends State<_Login> {
   Widget appBar() {
     return AppBar(
       title: Text("Social Login"),
+      backgroundColor: Colors.deepOrange,
     );
   }
 
   Widget body() {
     return Container(
-      alignment: Alignment.center,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          LoginButton(
-            callback: _facebookLogin(),
-            iconUrl: "https://cdn4.iconfinder.com/" +
-                "data/icons/social-media-icons-the-circle-set/48/" +
-                "facebook_circle-512.png",
-            socialMediaName: "facebook",
-          ),
-          LoginButton(
-            callback: _instaLogin(),
-            iconUrl: "https://cdn4.iconfinder.com/" +
-                "data/icons/social-messaging-ui-color-shapes-2-free/" +
-                "128/social-instagram-new-circle-512.png",
-            socialMediaName: "instagram",
-          ),
-        ],
+      color: Colors.white,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            LoginButton(
+              callback: _facebookLogin,
+              iconUrl: "https://cdn4.iconfinder.com/" +
+                  "data/icons/social-media-icons-the-circle-set/48/" +
+                  "facebook_circle-512.png",
+              socialMediaName: "facebook",
+            ),
+            LoginButton(
+              callback: _instaLogin,
+              iconUrl: "https://cdn4.iconfinder.com/" +
+                  "data/icons/social-messaging-ui-color-shapes-2-free/" +
+                  "128/social-instagram-new-circle-512.png",
+              socialMediaName: "instagram",
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -9,28 +9,37 @@ class LoginButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialButton(
-      onPressed: callback,
-      child: Padding(
-          padding: EdgeInsets.all(10),
+    return Container(
+      margin: EdgeInsets.symmetric(
+          vertical: 4,
+          horizontal: 2
+      ),
+      child: MaterialButton(
+        color: Colors.orangeAccent,
+        elevation: 2,
+        onPressed: callback,
+        child: Padding(
+          padding: EdgeInsets.all(12),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              RaisedButton(
-                elevation: 0,
-                color: Colors.transparent,
-                child: Container(
-                    constraints:
-                        BoxConstraints.expand(width: 50.0, height: 50.0),
-                    child: Image.network(iconUrl)),
-                onPressed: () {},
+              Container(
+                constraints:
+                  BoxConstraints.expand(width: 50.0, height: 50.0),
+                child: Image.network(iconUrl)
               ),
+              Container(width: 10,),
               Text(
                 "Continue with $socialMediaName",
-                style: TextStyle(fontSize: 18.0),
-              )
+                style: TextStyle(
+                  fontSize: 18.0,
+                  color: Colors.white,
+                ),
+              ),
             ],
-          )),
+          ),
+        ),
+      ),
     );
   }
 }
