@@ -24,16 +24,19 @@ class LoginButton extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Container(
-                constraints:
-                  BoxConstraints.expand(width: 50.0, height: 50.0),
-                child: Image.network(iconUrl)
+                constraints: BoxConstraints.expand(width: 40.0, height: 40.0),
+                child: Image.network(iconUrl),
               ),
-              Container(width: 10,),
-              Text(
-                "Continue with $socialMediaName",
-                style: TextStyle(
-                  fontSize: 18.0,
-                  color: Colors.white,
+              Container(
+                width: 10,
+              ),
+              Container(
+                child: Text(
+                  "Continue with $socialMediaName",
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ],
