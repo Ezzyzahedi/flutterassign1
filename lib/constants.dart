@@ -12,5 +12,5 @@ class Constants {
       "data/icons/social-media-icons-the-circle-set/48/" +
       "facebook_circle-512.png";
 
-  static const GOOGLE_API_KEY = 'AIzaSyDHQkYWxVN4eWVffGjdean1cyCP8wN0zbs';
+  static const GOOGLE_API_KEY = 'AIzaSyB0xLTy5W5TwPuUjIN63m9VBt-VYqG3SO0';
 }
