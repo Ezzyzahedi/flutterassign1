@@ -3,11 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_assign1/constants.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
-import 'package:location/location.dart' as LocationManager;
 import 'package:url_launcher/url_launcher.dart';
-
-
-GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: Constants.GOOGLE_API_KEY);
+import 'package:android_intent/android_intent.dart';
+import 'package:platform/platform.dart' as PlatformManager;
+import 'package:geolocation/geolocation.dart' as Geolocation;
 
 class Welcome extends StatelessWidget {
   @override
@@ -26,6 +25,8 @@ class _WelcomePage extends StatefulWidget {
 
 class _WelcomePageState extends State<_WelcomePage> {
 
+  GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: Constants.GOOGLE_API_KEY);
+  String email = "";
   GoogleMapController mapController;
   List<PlacesSearchResult> places = [];
 
@@ -34,33 +35,44 @@ class _WelcomePageState extends State<_WelcomePage> {
   void _onMapCreated(GoogleMapController controller, context) {
     setState(() {
       mapController = controller;
-      _getLocation(context);
+      _checkLocationService();
     });
   }
 
+  _checkLocationService() {
+    var platform = PlatformManager.LocalPlatform();
+    if (platform.isAndroid) {
+      _getLocation(context);
+    }
+  }
+
+  _openLocationSetting() async {
+    final AndroidIntent intent = new AndroidIntent(
+      action: 'android.settings.LOCATION_SOURCE_SETTINGS',
+    );
+    await intent.launch();
+  }
+
   _getLocation(context) async {
-
-    new LocationManager.Location().getLocation().then((loc) {
-      double lat, lng;
-      LatLng myLocation;
-      loc.forEach((k, v) {
-        if (k.startsWith("latitude")) lat = v;
-        if (k.startsWith("longitude")) lng = v;
+    Geolocation.Geolocation.currentLocation(accuracy: Geolocation.LocationAccuracy.block)
+      .listen((res) {
+        if (res.isSuccessful) {
+          print(res.location.toString());
+          var center = LatLng(res.location.latitude, res.location.longitude);
+          mapController.animateCamera(CameraUpdate.newCameraPosition(
+            CameraPosition(
+              bearing: 270.0,
+              target: center,
+              tilt: 30.0,
+              zoom: 16.0,
+            ),
+          )).then((animated) {
+            _getNearbyPlaces(center, context);
+          }).catchError((err) => print(err));
+        } else {
+          print(res.error.toString());
+        }
       });
-
-      print('lat: ' + lat.toString() + '; lng: ' + lng.toString());
-      myLocation = LatLng(lat, lng);
-      mapController.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(
-          bearing: 270.0,
-          target: myLocation,
-          tilt: 30.0,
-          zoom: 16.0,
-        ),
-      ));
-
-      getNearbyPlaces(myLocation, context);
-    }).catchError((err) => print('err: ' + err));
   }
 
 
@@ -70,6 +82,7 @@ class _WelcomePageState extends State<_WelcomePage> {
       .then((user) {
         setState(() {
           this.displayName = user.displayName;
+          this.email = user.email;
         });
     });
 
@@ -99,28 +112,30 @@ class _WelcomePageState extends State<_WelcomePage> {
     );
   }
 
-  void getNearbyPlaces(LatLng center, context) async {
+  void _getNearbyPlaces(LatLng center, context) async {
 
     final location = Location(center.latitude, center.longitude);
-    final result = await _places.searchNearbyWithRadius(
+    _places.searchNearbyWithRadius(
       location, 1500, keyword: "axis bank"
-    );
-    setState(() {
+    ).then((result) {
       if (result.status == "OK") {
         this.places = result.results;
         LatLng place;
         result.results.getRange(0, 1).forEach((f) {
           place = LatLng(f.geometry.location.lat, f.geometry.location.lng);
           final markerOptions = MarkerOptions(
-            position: place,
-            infoWindowText: InfoWindowText(
-              "${f.name}", "${f.types?.first}"));
+              position: place,
+              infoWindowText: InfoWindowText(
+                  "${f.name}", "${f.types?.first}"));
           mapController.addMarker(markerOptions);
         });
 
         _showDialog(place, context);
+      } else {
+        print(result.errorMessage);
       }
-    });
+    }).catchError((err) =>print(err));
+
   }
 
   _launchURL(url) async {
